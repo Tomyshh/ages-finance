@@ -44,6 +44,10 @@ export const metadata: Metadata = {
       "Nous traduisons vos chiffres en stratégie. Cabinet d'expertise comptable à proximité de Paris.",
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [{ url: "/favicon.ico", sizes: "any" }],
+    shortcut: "/favicon.ico",
+  },
 };
 
 const jsonLd = {
