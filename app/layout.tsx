@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import FirebaseAnalytics from "@/components/analytics/FirebaseAnalytics";
+import { SITE } from "@/lib/constants";
+import { absoluteUrl, OG_IMAGE, SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,10 +14,15 @@ const inter = Inter({
   adjustFontFallback: true,
 });
 
+const siteTitle = "AGEC Finances — Cabinet d'Experts-Comptables";
+const siteDescription =
+  "Nous traduisons vos chiffres en stratégie. Cabinet d'expertise comptable au Pré-Saint-Gervais, près de Paris.";
+const ogImageUrl = absoluteUrl(OG_IMAGE.path);
+
 export const metadata: Metadata = {
-  title: "AGEC Finances — Cabinet d'Experts-Comptables",
-  description:
-    "AGEC Finances, cabinet d'expertise comptable à Le Pré-Saint-Gervais près de Paris. Comptabilité, conseil fiscal, social, juridique et accompagnement stratégique.",
+  metadataBase: new URL(SITE_URL),
+  title: siteTitle,
+  description: SITE.description,
   keywords: [
     "expert-comptable",
     "cabinet comptable",
@@ -27,38 +34,48 @@ export const metadata: Metadata = {
     "audit",
     "conseil",
   ],
-  authors: [{ name: "AGEC Finances" }],
+  authors: [{ name: SITE.name }],
   openGraph: {
-    title: "AGEC Finances — Cabinet d'Experts-Comptables",
-    description:
-      "Nous traduisons vos chiffres en stratégie. Cabinet d'expertise comptable à proximité de Paris.",
-    url: "https://agecfinances.com",
-    siteName: "AGEC Finances",
-    locale: "fr_FR",
     type: "website",
+    locale: "fr_FR",
+    url: SITE_URL,
+    siteName: SITE.name,
+    title: siteTitle,
+    description: siteDescription,
+    images: [
+      {
+        url: OG_IMAGE.path,
+        secureUrl: ogImageUrl,
+        width: OG_IMAGE.width,
+        height: OG_IMAGE.height,
+        alt: OG_IMAGE.alt,
+        type: "image/jpeg",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AGEC Finances — Cabinet d'Experts-Comptables",
-    description:
-      "Nous traduisons vos chiffres en stratégie. Cabinet d'expertise comptable à proximité de Paris.",
+    title: siteTitle,
+    description: siteDescription,
+    images: [ogImageUrl],
   },
   robots: { index: true, follow: true },
   icons: {
     icon: [{ url: "/favicon.ico", sizes: "any" }],
     shortcut: "/favicon.ico",
+    apple: [{ url: "/images/af-logo-circle.png", sizes: "180x180", type: "image/png" }],
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "AccountingService",
-  name: "AGEC Finances",
-  description:
-    "Cabinet d'expertise comptable situé au Pré-Saint-Gervais, à proximité de Paris.",
-  url: "https://agecfinances.com",
+  name: SITE.name,
+  description: SITE.description,
+  url: SITE_URL,
+  image: ogImageUrl,
   telephone: "+33143605000",
-  email: "contact@agecfinances.com",
+  email: SITE.email,
   address: {
     "@type": "PostalAddress",
     streetAddress: "3 Avenue Faidherbe",
@@ -79,6 +96,14 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" type="image/x-icon" />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="/images/af-logo-circle.png" />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:secure_url" content={ogImageUrl} />
+        <meta property="og:image:width" content={String(OG_IMAGE.width)} />
+        <meta property="og:image:height" content={String(OG_IMAGE.height)} />
+        <meta property="og:image:alt" content={OG_IMAGE.alt} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta name="twitter:image" content={ogImageUrl} />
         <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
         <script
           type="application/ld+json"
