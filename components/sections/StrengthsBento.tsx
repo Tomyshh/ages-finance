@@ -1,7 +1,5 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import ScrollReveal from "@/components/ui/scroll-reveal";
 import {
   Calculator,
   Shield,
@@ -13,7 +11,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 
 export default function StrengthsBento() {
   return (
-    <section id="atouts" className="relative py-16 sm:py-20">
+    <section id="atouts" className="section-below-fold relative py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
         <SectionHeading
           label="Nos atouts"
@@ -175,12 +173,9 @@ export default function StrengthsBento() {
                   ].map((item, i) => {
                     const Icon = item.icon;
                     return (
-                      <motion.div
+                      <ScrollReveal
                         key={item.label}
-                        initial={{ opacity: 0, x: 20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 }}
+                        delayMs={i * 100}
                         className={`flex items-center gap-3 ${i % 2 === 0 ? "ml-0" : "ml-8"}`}
                       >
                         <div className="flex size-9 shrink-0 items-center justify-center squircle-sm border border-border/50 bg-white/40">
@@ -189,7 +184,7 @@ export default function StrengthsBento() {
                         <span className="squircle-pill border border-border/50 bg-white/35 px-3 py-1.5 text-xs text-muted backdrop-blur-sm">
                           {item.label}
                         </span>
-                      </motion.div>
+                      </ScrollReveal>
                     );
                   })}
                 </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import ScrollReveal from "@/components/ui/scroll-reveal";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Button from "@/components/ui/Button";
@@ -42,7 +42,7 @@ export default function ContactSection() {
     "w-full px-4 py-3.5 squircle-md border border-border/60 bg-white/45 text-navy backdrop-blur-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all text-sm";
 
   return (
-    <section id="contact" className="relative py-16 sm:py-20">
+    <section id="contact" className="section-below-fold relative py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
         <SectionHeading
           label="Contact"
@@ -51,13 +51,7 @@ export default function ContactSection() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-3"
-          >
+          <ScrollReveal className="lg:col-span-3">
             {submitted ? (
               <div className="squircle-xl glass-panel p-14 text-center">
                 <div className="w-16 h-16 squircle-lg bg-green-50 flex items-center justify-center mx-auto mb-6">
@@ -152,15 +146,9 @@ export default function ContactSection() {
                 </Button>
               </form>
             )}
-          </motion.div>
+          </ScrollReveal>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="lg:col-span-2 space-y-6"
-          >
+          <ScrollReveal delayMs={150} className="lg:col-span-2 space-y-6">
             <div className="squircle-xl glass-panel space-y-6 p-8">
               {contactInfo.map((info) => {
                 const Icon = info.icon;
@@ -201,7 +189,7 @@ export default function ContactSection() {
                 title="Localisation AGEC Finances"
               />
             </div>
-          </motion.div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

@@ -1,11 +1,9 @@
-"use client";
-
 import { Features4 } from "@/components/ui/features-4";
 import { SERVICES } from "@/lib/constants";
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="relative py-16 sm:py-20">
+    <section id="services" className="section-below-fold relative py-16 sm:py-20">
       <Features4
         label="Nos services"
         title="Une expertise complète à votre service"

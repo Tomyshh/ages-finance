@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
 
 interface AnimatedCounterProps {
   value: number;
@@ -19,8 +18,26 @@ export default function AnimatedCounter({
   delay = 0,
 }: AnimatedCounterProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const [isInView, setIsInView] = useState(false);
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-60px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!isInView) return;
@@ -45,19 +62,16 @@ export default function AnimatedCounter({
   }, [isInView, value]);
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45, delay }}
-      className={align === "left" ? "text-left" : "text-center"}
+      className={`scroll-reveal ${isInView ? "scroll-reveal-visible" : ""} ${align === "left" ? "text-left" : "text-center"}`}
+      style={delay ? { transitionDelay: `${delay * 1000}ms` } : undefined}
     >
       <div className="font-display text-4xl font-semibold tracking-tight text-navy tabular-nums sm:text-5xl">
         <span className="text-accent">{count}</span>
         <span className="text-accent">{suffix}</span>
       </div>
       <div className="mt-1.5 text-sm text-muted">{label}</div>
-    </motion.div>
+    </div>
   );
 }

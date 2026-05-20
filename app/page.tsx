@@ -1,10 +1,25 @@
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/ui/Navbar";
 import HeroSection from "@/components/hero/HeroSection";
 import ServicesSection from "@/components/sections/ServicesSection";
-import AboutSection from "@/components/sections/AboutSection";
-import StrengthsBento from "@/components/sections/StrengthsBento";
-import ContactSection from "@/components/sections/ContactSection";
 import Footer from "@/components/ui/Footer";
+import SectionFallback from "@/components/ui/section-fallback";
+
+const AboutSection = dynamic(
+  () => import("@/components/sections/AboutSection"),
+  { loading: () => <SectionFallback minHeight="20rem" /> }
+);
+
+const StrengthsBento = dynamic(
+  () => import("@/components/sections/StrengthsBento"),
+  { loading: () => <SectionFallback minHeight="28rem" /> }
+);
+
+const ContactSection = dynamic(
+  () => import("@/components/sections/ContactSection"),
+  { loading: () => <SectionFallback minHeight="32rem" /> }
+);
 
 export default function HomePage() {
   return (
@@ -18,9 +33,15 @@ export default function HomePage() {
             <HeroSection />
           </div>
           <ServicesSection />
-          <AboutSection />
-          <StrengthsBento />
-          <ContactSection />
+          <Suspense fallback={<SectionFallback minHeight="20rem" />}>
+            <AboutSection />
+          </Suspense>
+          <Suspense fallback={<SectionFallback minHeight="28rem" />}>
+            <StrengthsBento />
+          </Suspense>
+          <Suspense fallback={<SectionFallback minHeight="32rem" />}>
+            <ContactSection />
+          </Suspense>
         </main>
         <Footer />
       </div>
