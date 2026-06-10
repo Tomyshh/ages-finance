@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [".env"],
+  "globalEnv": [
+    "NODE_ENV",
+    "PENNYLANE_API_KEY",
+    "PENNYLANE_COMPANY_ID",
+    "PENNYLANE_USE_2026_API",
+    "RESEND_API_KEY",
+    "MAIL_FROM",
+    "MAIL_TO",
+    "INTERNAL_SHARED_SECRET",
+    "MAILING_SERVICE_URL",
+    "API_GATEWAY_URL",
+    "DATABASE_URL",
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_STORAGE_BUCKET",
+    "PORT"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "out/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AGEC Finances - Monorepo
 
-## Getting Started
+Monorepo Turborepo regroupant le site marketing, un dashboard CRM et les
+services backend du flux **Mail Delivery Clôture** (récupération Pennylane ->
+ZIP -> envoi Resend).
 
-First, run the development server:
+## Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+apps/
+  site/         Site marketing Next.js (export statique, Firebase Hosting)
+  dashboard/    Dashboard CRM Next.js (déclenche les envois de clôture)
+  api-gateway/  Service Render (orchestration + persistance des jobs)
+  mailing/      Service Render (assemblage ZIP + envoi Resend)
+packages/
+  shared/       Types, schémas Zod, helpers d'env partagés
+  pennylane/    Client typé de l'API Pennylane v2
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Flux fonctionnel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Le dashboard liste les exercices fiscaux (via l'api-gateway -> Pennylane).
+2. Cocher "Mail Delivery Clôture" appelle `POST /api/deliveries` (exercice choisi).
+3. L'api-gateway crée un job et déclenche le service de mailing.
+4. Le mailing récupère **FEC + Grand Livre + justificatifs PDF** de l'exercice,
+   assemble un ZIP et l'envoie via **Resend** à `tom@yapio.io`.
+5. Si le ZIP dépasse ~40 Mo, il est uploadé (Supabase Storage) et un lien est
+   envoyé à la place de la pièce jointe.
+6. Le mailing rappelle l'api-gateway pour mettre à jour le statut affiché.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Développement
 
-## Learn More
+```bash
+npm install
+npm run build        # build de tous les workspaces (Turbo)
 
-To learn more about Next.js, take a look at the following resources:
+# Lancer les services backend (dans des terminaux séparés, après avoir rempli .env)
+npm run dev -w @agec/api-gateway
+npm run dev -w @agec/mailing
+npm run dev -w @agec/dashboard
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copier `.env.example` -> `.env` à la racine pour les services backend, et
+`apps/dashboard/.env.example` -> `apps/dashboard/.env.local` pour le dashboard.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Limites connues de l'API Pennylane
 
-## Deploy on Vercel
+- Pas de webhooks natifs : le déclencheur vit dans le dashboard, pas dans Pennylane.
+- La "Plaquette des Comptes Annuels" et le "Dossier de Travail" ne sont pas
+  exposés par l'API publique (ajout manuel possible ultérieurement).
+- Les justificatifs sont récupérés facture par facture (pas de bundle natif).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Sécurité
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- La clé Pennylane initialement partagée a été exposée : **la regénérer**.
+- Les clés ne vivent que côté serveur (api-gateway / mailing), jamais dans le navigateur.
+
+## Déploiement
+
+- Backend : `render.yaml` (Blueprint) déploie `agec-api-gateway` et `agec-mailing`.
+  Renseigner les secrets du groupe `agec-secrets` dans le dashboard Render.
+  Si persistance Supabase : exécuter `apps/api-gateway/db/delivery_jobs.sql`.
+- Site marketing : `npm run deploy:site` (build + Firebase Hosting).
+- Dashboard : déployable sur Vercel/Render (variables `API_GATEWAY_URL`,
+  `GATEWAY_PUBLIC_TOKEN`).

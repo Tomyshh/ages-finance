@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Design tokens — same palette as apps/site
+   ────────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --navy: #0c1929;
+  --navy-mid: #152238;
+  --navy-light: #243b5c;
+  --accent: #1d6fd8;
+  --accent-light: #3b8ef0;
+  --gold: #b8861a;
+  --gold-light: #d4a84b;
+  --background: #f4f6f9;
+  --foreground: #0c1929;
+  --surface: #ffffff;
+  --surface-muted: #eef1f6;
+  --muted: #5c6b7e;
+  --border: #e2e8f0;
+  --destructive: #dc2626;
+  --destructive-fg: #ffffff;
+  --shadow-soft: 0 2px 24px rgba(12, 25, 41, 0.04);
+  --shadow-card: 0 12px 40px rgba(12, 25, 41, 0.06);
+  --shadow-button: 0 1px 3px rgba(12, 25, 41, 0.08);
+
+  /* Squircle radii */
+  --squircle-ratio: 1.65;
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r-md: 18px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --r-2xl: 44px;
+}
+
+@theme inline {
+  --color-navy: var(--navy);
+  --color-navy-mid: var(--navy-mid);
+  --color-navy-light: var(--navy-light);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-fg: var(--destructive-fg);
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Base
+   ────────────────────────────────────────────────────────────────────────────── */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Display typography
+   ────────────────────────────────────────────────────────────────────────────── */
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Superellipse (Apple squircle)
+   ────────────────────────────────────────────────────────────────────────────── */
+
+.squircle-xs  { border-radius: var(--r-xs);  corner-shape: superellipse(var(--squircle-ratio)); }
+.squircle-sm  { border-radius: var(--r-sm);  corner-shape: superellipse(var(--squircle-ratio)); }
+.squircle-md  { border-radius: var(--r-md);  corner-shape: superellipse(var(--squircle-ratio)); }
+.squircle-lg  { border-radius: var(--r-lg);  corner-shape: superellipse(var(--squircle-ratio)); }
+.squircle-xl  { border-radius: var(--r-xl);  corner-shape: superellipse(var(--squircle-ratio)); }
+.squircle-2xl { border-radius: var(--r-2xl); corner-shape: superellipse(var(--squircle-ratio)); }
+.squircle-pill { border-radius: 9999px; corner-shape: superellipse(1.35); }
+
+@supports not (corner-shape: superellipse(1)) {
+  .squircle-xs, .squircle-sm, .squircle-md,
+  .squircle-lg, .squircle-xl, .squircle-2xl,
+  .squircle-pill { corner-shape: round; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Glass panel (site-matching frosted card)
+   ────────────────────────────────────────────────────────────────────────────── */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-soft);
+}
+
+.glass-panel-solid {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Ambient background (soft radial glow, same as site)
+   ────────────────────────────────────────────────────────────────────────────── */
+
+.page-ambient {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.page-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--background);
+}
+
+.page-ambient::after {
+  content: "";
+  position: absolute;
+  inset: -20% -10%;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 8%, rgba(147, 197, 253, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 88% 18%, rgba(199, 210, 254, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 55%, rgba(219, 234, 254, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 35% at 75% 92%, rgba(147, 197, 253, 0.1) 0%, transparent 55%);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Sidebar rail (collapsed icon nav)
+   ────────────────────────────────────────────────────────────────────────────── */
+
+.sidebar-rail-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--r-sm);
+  corner-shape: superellipse(var(--squircle-ratio));
+  padding: 8px 4px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.65);
+  transition: background-color 0.2s, color 0.2s;
+}
+.sidebar-rail-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.sidebar-rail-link-active {
+  background-color: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Section divider
+   ────────────────────────────────────────────────────────────────────────────── */
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(29, 111, 216, 0.1), transparent);
+}

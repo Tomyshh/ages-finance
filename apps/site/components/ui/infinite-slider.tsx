@@ -39,9 +39,13 @@ export function InfiniteSlider({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [key, setKey] = useState(0);
 
-  useEffect(() => {
+  // Reset the active duration when the base duration prop changes, using the
+  // React-recommended "adjust state during render" pattern (no effect).
+  const [prevBaseDuration, setPrevBaseDuration] = useState(baseDuration);
+  if (prevBaseDuration !== baseDuration) {
+    setPrevBaseDuration(baseDuration);
     setCurrentDuration(baseDuration);
-  }, [baseDuration]);
+  }
 
   useEffect(() => {
     let controls: ReturnType<typeof animate> | undefined;

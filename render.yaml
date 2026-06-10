@@ -1,0 +1,60 @@
+# Render Blueprint - 2 services backend du flux "Mail Delivery Clôture".
+# Le dashboard (Next.js) et le site marketing se déploient séparément.
+envVarGroups:
+  - name: agec-secrets
+    envVars:
+      - key: PENNYLANE_API_KEY
+        sync: false
+      - key: PENNYLANE_COMPANY_ID
+        sync: false
+      - key: PENNYLANE_USE_2026_API
+        value: "true"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: MAIL_TO
+        value: tom@yapio.io
+      - key: INTERNAL_SHARED_SECRET
+        generateValue: true
+      - key: GATEWAY_PUBLIC_TOKEN
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: clotures
+
+services:
+  - type: web
+    name: agec-api-gateway
+    runtime: node
+    plan: starter
+    buildCommand: npm install --include=dev && npx turbo run build --filter=@agec/api-gateway
+    startCommand: node apps/api-gateway/dist/index.js
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - fromGroup: agec-secrets
+      - key: MAILING_SERVICE_URL
+        fromService:
+          type: web
+          name: agec-mailing
+          property: hostport
+
+  - type: web
+    name: agec-mailing
+    runtime: node
+    plan: starter
+    buildCommand: npm install --include=dev && npx turbo run build --filter=@agec/mailing
+    startCommand: node apps/mailing/dist/index.js
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - fromGroup: agec-secrets
+      - key: API_GATEWAY_URL
+        fromService:
+          type: web
+          name: agec-api-gateway
+          property: hostport
